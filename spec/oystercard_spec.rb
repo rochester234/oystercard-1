@@ -35,9 +35,15 @@ describe "#touch_in" do
   it   { expect(subject).to respond_to(:touch_in) }
 
   it "should return in journey when touched in" do
-    oystercard = Oystercard.new
+    oystercard = Oystercard.new(5)
     oystercard.touch_in
     expect(oystercard.in_journey?).to eq true
+  end
+
+  it "should return in journey when touched in" do
+    oystercard = Oystercard.new()
+    message = "Insufficient funds, please top up #{Oystercard::MIN_BALANCE}"
+    expect{oystercard.touch_in}.to raise_error message
   end
 end
 
