@@ -15,6 +15,7 @@ class Oystercard
   end
 
   def touch_out
+    deduct(MIN_BALANCE)
     @in_journey = false
   end
 
@@ -26,6 +27,8 @@ class Oystercard
     fail "The limit is 90" if amount + balance > BALANCE_LIMIT
     @balance += amount
   end
+
+private
 
   def deduct(fare)
     @balance -= fare

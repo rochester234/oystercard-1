@@ -26,8 +26,8 @@ describe '#deduct' do
   it 'deducts money from card' do
     oystercard = Oystercard.new(30)
     balance = oystercard.balance
-    fare = 2
-    expect(oystercard.deduct(fare)).to eq (balance - fare)
+    oystercard.touch_out
+    expect(oystercard.balance).to eq (balance - Oystercard::MIN_BALANCE)
   end
 end
 
@@ -55,6 +55,12 @@ describe "#touch_out" do
     oystercard = Oystercard.new
     oystercard.touch_out
     expect(oystercard.in_journey?).to eq false
+  end
+
+  it "should charge when touching out" do
+    oystercard = Oystercard.new(10)
+    oystercard.touch_out
+    expect{oystercard.touch_out}.to change{oystercard.balance}.by(-Oystercard::MIN_BALANCE)
   end
 
   end
