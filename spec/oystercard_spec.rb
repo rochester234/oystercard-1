@@ -31,4 +31,25 @@ describe '#deduct' do
   end
 end
 
+describe "#touch_in" do
+  it   { expect(subject).to respond_to(:touch_in) }
+
+  it "should return in journey when touched in" do
+    oystercard = Oystercard.new
+    oystercard.touch_in
+    expect(oystercard.in_journey?).to eq true
+  end
+end
+
+describe "#touch_out" do
+
+  it   { expect(subject).to respond_to(:touch_out) }
+
+  it "should return in journey when touched out" do
+    oystercard = Oystercard.new
+    oystercard.touch_out
+    expect(oystercard.in_journey?).to eq false
+  end
+
+  end
 end
