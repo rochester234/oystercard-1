@@ -12,4 +12,8 @@ class Oystercard
     fail "The limit is 90" if amount + balance > BALANCE_LIMIT
     @balance += amount
   end
+
+  def deduct(fare)
+    @balance -= fare
+  end
 end
