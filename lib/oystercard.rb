@@ -1,6 +1,6 @@
 class Oystercard
 
-  attr_reader :balance, :journeys, :station
+  attr_reader :balance, :journeys
   DEFAULT_BALANCE = 0
   BALANCE_LIMIT = 90
   MIN_BALANCE = 1
@@ -9,6 +9,7 @@ class Oystercard
     @balance = balance
     @journey = {}
     @journeys = []
+    @station = nil
   end
 
   def touch_in(station)

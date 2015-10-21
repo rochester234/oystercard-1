@@ -56,7 +56,7 @@ describe "#touch_in(station)" do
   end
 
   it "shoud return entry station when in journey" do
-    expect(subject.station).to eq station
+    expect(subject.in_journey?).to eq true
   end
 
 end
@@ -79,7 +79,7 @@ describe "#touch_out(exit_station)" do
   end
 
   it "should return nil when not in journey" do
-    expect(subject.station).to eq nil
+    expect(subject.in_journey?).to eq false
   end
 
   it "should record one journey (set of an entry and exit stations)" do
