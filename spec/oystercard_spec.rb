@@ -1,8 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
-  let (:entry_station) {double :entry_station}
-  let (:exit_station) {double :exit_station}
+  let (:station) {double :station}
 
   it "has a balance of zero" do
     expect(subject.balance).to eq (0)
@@ -31,15 +30,15 @@ end
 describe '#deduct' do
   it 'deducts money from card' do
     subject.top_up(Oystercard::MIN_BALANCE)
-    subject.touch_in(entry_station)
-    expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
+    subject.touch_in(station)
+    expect{subject.touch_out(station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
   end
 end
 
-describe "#touch_in(entry_station)" do
+describe "#touch_in(station)" do
   before(:each) do
     subject.top_up(Oystercard::MIN_BALANCE)
-    subject.touch_in(entry_station)
+    subject.touch_in(station)
   end
 
   it   { expect(subject).to respond_to(:touch_in) }
@@ -51,13 +50,13 @@ describe "#touch_in(entry_station)" do
   end
 
   it "should return in journey when touched in" do
-    subject.touch_out(exit_station)
+    subject.touch_out(station)
     message = "Insufficient funds, please top up #{Oystercard::MIN_BALANCE}"
-    expect{subject.touch_in(entry_station)}.to raise_error message
+    expect{subject.touch_in(station)}.to raise_error message
   end
 
   it "shoud return entry station when in journey" do
-    expect(subject.entry_station).to eq entry_station
+    expect(subject.station).to eq station
   end
 
 end
@@ -65,8 +64,8 @@ end
 describe "#touch_out(exit_station)" do
   before(:each) do
     subject.top_up(Oystercard::MIN_BALANCE)
-    subject.touch_in(entry_station)
-    subject.touch_out(exit_station)
+    subject.touch_in(station)
+    subject.touch_out(station)
   end
 
   it   { expect(subject).to respond_to(:touch_out) }
@@ -76,15 +75,15 @@ describe "#touch_out(exit_station)" do
   end
 
   it "should charge when touching out" do
-    expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
+    expect{subject.touch_out(station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
   end
 
   it "should return nil when not in journey" do
-    expect(subject.entry_station).to eq nil
+    expect(subject.station).to eq nil
   end
 
   it "should record one journey (set of an entry and exit stations)" do
-    expect(subject.journeys).to eq [{:entry_station => entry_station, :exit_station => exit_station}]
+    expect(subject.journeys).to eq [{:entry_station => station, :exit_station => station}]
     end
   end
 end
