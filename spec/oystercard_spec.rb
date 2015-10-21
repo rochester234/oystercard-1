@@ -1,7 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
-  let (:station) {double :station}
+  let (:station) {double :station, name: "Aldgate", zone: 1}
 
   it "has a balance of zero" do
     expect(subject.balance).to eq (0)
@@ -42,7 +42,6 @@ describe "#touch_in(station)" do
   end
 
   it   { expect(subject).to respond_to(:touch_in) }
-
 
 
   it "should return in journey when touched in" do

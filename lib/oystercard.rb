@@ -1,3 +1,5 @@
+require './lib/station'
+
 class Oystercard
 
   attr_reader :balance, :journeys
