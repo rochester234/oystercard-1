@@ -1,7 +1,8 @@
 require 'oystercard'
 
 describe Oystercard do
-  # let (:oystercard) {Oystercard.new}
+  let (:entry_station) {double :entry_station}
+
   it "has a balance of zero" do
     expect(subject.balance).to eq (0)
   end
@@ -18,49 +19,63 @@ describe '#top_up' do
   it "has a maximum balance at 90" do
     max_balance = Oystercard::BALANCE_LIMIT
     subject.top_up(max_balance)
-    expect{subject.top_up 1}.to raise_error "The limit is 90"
+    expect{subject.top_up 1}.to raise_error "The limit is #{Oystercard::BALANCE_LIMIT}"
   end
 end
 
 describe '#deduct' do
   it 'deducts money from card' do
-    oystercard = Oystercard.new(30)
-    balance = oystercard.balance
-    oystercard.touch_out
-    expect(oystercard.balance).to eq (balance - Oystercard::MIN_BALANCE)
+    subject.top_up(Oystercard::MIN_BALANCE)
+    subject.touch_in(entry_station)
+    expect{subject.touch_out}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
   end
 end
 
-describe "#touch_in" do
+describe "#touch_in(entry_station)" do
+  before(:each) do
+    subject.top_up(Oystercard::MIN_BALANCE)
+    subject.touch_in(entry_station)
+  end
+
   it   { expect(subject).to respond_to(:touch_in) }
 
+
+
   it "should return in journey when touched in" do
-    oystercard = Oystercard.new(5)
-    oystercard.touch_in
-    expect(oystercard.in_journey?).to eq true
+    expect(subject.in_journey?).to eq true
   end
 
   it "should return in journey when touched in" do
-    oystercard = Oystercard.new()
+    subject.touch_out
     message = "Insufficient funds, please top up #{Oystercard::MIN_BALANCE}"
-    expect{oystercard.touch_in}.to raise_error message
+    expect{subject.touch_in(entry_station)}.to raise_error message
   end
+
+  it "shoud return entry station when in journey" do
+    expect(subject.entry_station).to eq entry_station
+  end
+
 end
 
 describe "#touch_out" do
+  before(:each) do
+    subject.top_up(Oystercard::MIN_BALANCE)
+    subject.touch_in(entry_station)
+    subject.touch_out
+  end
 
   it   { expect(subject).to respond_to(:touch_out) }
 
   it "should return in journey when touched out" do
-    oystercard = Oystercard.new
-    oystercard.touch_out
-    expect(oystercard.in_journey?).to eq false
+    expect(subject.in_journey?).to eq false
   end
 
   it "should charge when touching out" do
-    oystercard = Oystercard.new(10)
-    oystercard.touch_out
-    expect{oystercard.touch_out}.to change{oystercard.balance}.by(-Oystercard::MIN_BALANCE)
+    expect{subject.touch_out}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
+  end
+
+  it "should return nil when not in journey" do
+    expect(subject.entry_station).to eq nil
   end
 
   end
