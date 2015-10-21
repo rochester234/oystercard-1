@@ -26,15 +26,15 @@ class Oystercard
   end
 
 
-  def in_journey?
-    @station == nil ? false : true
-  end
 
   def top_up(amount)
     fail "The limit is #{BALANCE_LIMIT}" if full?(amount)
     @balance += amount
   end
 
+  def in_journey?
+    @station == nil ? false : true
+  end
 
 private
 
