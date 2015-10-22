@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   let (:station) {double :station, name: "Aldgate", zone: 1}
+  let (:station1) {double :station1}
 
   it "has a balance of zero" do
     expect(subject.balance).to eq (0)
@@ -64,7 +65,7 @@ describe "#touch_out(exit_station)" do
   before(:each) do
     subject.top_up(Oystercard::MIN_BALANCE)
     subject.touch_in(station)
-    subject.touch_out(station)
+    subject.touch_out(station1)
   end
 
   it   { expect(subject).to respond_to(:touch_out) }
@@ -82,7 +83,7 @@ describe "#touch_out(exit_station)" do
   end
 
   it "should record one journey (set of an entry and exit stations)" do
-    expect(subject.journeys).to eq [{:entry_station => station, :exit_station => station}]
+    expect(subject.journeys).to eq [{station => station1}]
     end
   end
 end
