@@ -2,7 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   let (:station) {double :station, name: "Aldgate", zone: 1}
-  let (:station1) {double :station1}
+    let (:journey) {double :journey}
 
   it "has a balance of zero" do
     expect(subject.balance).to eq (0)
@@ -27,6 +27,7 @@ end
 
 describe '#deduct' do
   it 'deducts money from card' do
+    allow(subject).to receive(:journey).and_return(journey)
     subject.top_up(Oystercard::MIN_BALANCE)
     subject.touch_in(station)
     expect{subject.touch_out(station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
@@ -43,7 +44,7 @@ describe "#touch_in(station)" do
 
 
 
-  it "should return in journey when touched in" do
+  it "should return wn error when insufficient funds" do
     subject.touch_out(station)
     message = "Insufficient funds, please top up #{Oystercard::MIN_BALANCE}"
     expect{subject.touch_in(station)}.to raise_error message
@@ -56,7 +57,6 @@ describe "#touch_out(exit_station)" do
   before(:each) do
     subject.top_up(Oystercard::MIN_BALANCE)
     subject.touch_in(station)
-    subject.touch_out(station1)
   end
 
   it   { expect(subject).to respond_to(:touch_out) }

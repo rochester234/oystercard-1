@@ -13,22 +13,24 @@ class Oystercard
     @balance = balance
     #@journey = journey_klass
     @journeys = []
-    @station = nil
+    #@station = nil
   end
 
   def touch_in(station)
     fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
     #@journey[:entry_station] = station
     #@station = station
-    Journey.new(station)
+    @new_journey = Journey.new
+    @new_journey.touch_in(station)
+
   end
 
   def touch_out(station)
-    deduct(MIN_BALANCE)
+    deduct(@new_journey.calculate_fare)
     #@journey[:exit_station] = station
     #@journeys << {@station => station}
-    Journey.exit_station = station
-    @station = nil
+    @new_journey.touch_out(station)
+    #@station = nil
   end
 
 
