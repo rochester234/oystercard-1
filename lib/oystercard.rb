@@ -2,7 +2,7 @@ require './lib/station'
 
 class Oystercard
 
-  attr_reader :balance, :journeys
+  attr_reader :balance, :journeys, :journey
   DEFAULT_BALANCE = 0
   BALANCE_LIMIT = 90
   MIN_BALANCE = 1
@@ -16,14 +16,14 @@ class Oystercard
 
   def touch_in(station)
     fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
-    @journey[:entry_station] = station
+    #@journey[:entry_station] = station
     @station = station
   end
 
   def touch_out(station)
     deduct(MIN_BALANCE)
-    @journey[:exit_station] = station
-    @journeys << @journey
+    #@journey[:exit_station] = station
+    @journeys << {@station => station}
     @station = nil
   end
 
