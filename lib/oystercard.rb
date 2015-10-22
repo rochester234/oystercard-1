@@ -1,5 +1,6 @@
 require './lib/station'
 require_relative 'journey'
+require_relative 'journey_log'
 
 class Oystercard
 
@@ -8,9 +9,9 @@ class Oystercard
   BALANCE_LIMIT = 90
   MIN_BALANCE = 1
 
-  def initialize(balance = DEFAULT_BALANCE, journey_klass = 'tube')
+  def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
-    @journey = journey_klass
+    #@journey = journey_klass
     @journeys = []
     @station = nil
   end
@@ -18,15 +19,15 @@ class Oystercard
   def touch_in(station)
     fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
     #@journey[:entry_station] = station
-    new_journey = Journey.new
-    new_journey.in_progress = true
-    @station = station
+    #@station = station
+    Journey.new(station)
   end
 
   def touch_out(station)
     deduct(MIN_BALANCE)
     #@journey[:exit_station] = station
-    @journeys << {@station => station}
+    #@journeys << {@station => station}
+    Journey.exit_station = station
     @station = nil
   end
 

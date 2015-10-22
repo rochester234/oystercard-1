@@ -8,9 +8,6 @@ describe Oystercard do
     expect(subject.balance).to eq (0)
   end
 
-  it 'records a journey' do
-    expect(subject.journeys).to be_empty
-  end
 
 describe '#top_up' do
   it "responds to top_up" do
@@ -45,9 +42,6 @@ describe "#touch_in(station)" do
   it   { expect(subject).to respond_to(:touch_in) }
 
 
-  it "should return in journey when touched in" do
-    expect(subject.in_journey?).to eq true
-  end
 
   it "should return in journey when touched in" do
     subject.touch_out(station)
@@ -55,9 +49,6 @@ describe "#touch_in(station)" do
     expect{subject.touch_in(station)}.to raise_error message
   end
 
-  it "shoud return entry station when in journey" do
-    expect(subject.in_journey?).to eq true
-  end
 
 end
 
@@ -70,20 +61,10 @@ describe "#touch_out(exit_station)" do
 
   it   { expect(subject).to respond_to(:touch_out) }
 
-  it "should return in journey when touched out" do
-    expect(subject.in_journey?).to eq false
-  end
+
 
   it "should charge when touching out" do
     expect{subject.touch_out(station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
   end
-
-  it "should return nil when not in journey" do
-    expect(subject.in_journey?).to eq false
-  end
-
-  it "should record one journey (set of an entry and exit stations)" do
-    expect(subject.journeys).to eq [{station => station1}]
-    end
-  end
+end
 end

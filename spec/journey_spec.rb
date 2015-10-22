@@ -1,37 +1,23 @@
+it 'records a journey' do
+  expect(subject.journeys).to be_empty
+end
 
-# in progress
-#
-# fare_calc
-#
-# start_journey
-#
-# end_journey
-#
-# attr journey_log
-require 'oystercard'
-require 'journey'
+it "should return in journey when touched in" do
+  expect(subject.in_journey?).to eq true
+end
+it "shoud return entry station when in journey" do
+  expect(subject.in_journey?).to eq true
+end
 
-describe Journey do
+it "should return in journey when touched out" do
+  expect(subject.in_journey?).to eq false
+end
 
-  let (:oystercard) {double :oystercard, touch_in = true}
+it "should return nil when not in journey" do
+  expect(subject.in_journey?).to eq false
+end
 
-
-  it { expect(subject).to respond_to(:in_progress?) }
-
-  it { expect(subject).to respond_to(:fare_calc) }
-
-  it { expect(subject).to respond_to(:start_journey) }
-
-  it { expect(subject).to respond_to(:end_journey) }
-
-  context 'testing journey class functionality' do
-    it "#in_progress should tell us when we're in_journey" do
-      card = Oystercard.new
-      card.top_up(10)
-      station = Station.new
-      card.touch_in(station)
-      expect(subject.in_progress?).to eq true
-    end
+it "should record one journey (set of an entry and exit stations)" do
+  expect(subject.journeys).to eq [{station => station1}]
   end
-
 end

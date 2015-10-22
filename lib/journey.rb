@@ -1,16 +1,15 @@
+require './lib/oystercard'
 class Journey
-attr_accessor :in_progress
-  def in_progress?
 
-@in_progress
-  end
+attr_accessor :entry_station, :exit_station
 
-  def fare_calc
-  end
+def initialize(station)
 
-  def start_journey
-  end
+  @entry_station =station
+end
 
-  def end_journey
-  end
+def exit_station(station)
+  @exit_station = station
+end
+
 end
