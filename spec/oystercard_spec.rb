@@ -1,7 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
-  let (:station) {double :station, name: "Aldgate", zone: 1}
+  let (:station) {double :station, name: "Aldgate", zone: 1, entry_station: "Aldgate", exit_station: 'Monument', entrystation: "Aldgate", exitstation: "Monument"}
     let (:journey) {double :journey}
 
   it "has a balance of zero" do
@@ -42,7 +42,9 @@ describe "#touch_in(station)" do
 
   it   { expect(subject).to respond_to(:touch_in) }
 
-
+  it 'checks a journey is in progress after a touch in' do
+      expect(subject.in_journey?).to eq true
+  end
 
   it "should return wn error when insufficient funds" do
     subject.touch_out(station)
@@ -61,10 +63,30 @@ describe "#touch_out(exit_station)" do
 
   it   { expect(subject).to respond_to(:touch_out) }
 
-
+  it 'should show a journey is not in progress after touch out' do
+    subject.touch_out(station)
+    expect(subject.in_journey?).to eq false
+  end
 
   it "should charge when touching out" do
     expect{subject.touch_out(station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
   end
 end
+
+describe '#fare penalty for not completing journey' do
+let (:station1) {double :station, name: "Aldgate", zone: 1, exit_station: 'Monument', exitstation: "Monument"}
+let (:station2) {double :station, name: "Aldgate", zone: 1, entry_station: "Aldgate", entrystation: "Aldgate", exitstation: "bank"}
+let (:station3) {double :station, name: "Aldgate", zone: 1, entry_station: "Aldgate", entrystation: "Aldgate"}
+
+  it 'charges a penalty fare if upon touch out there is no entry station' do
+    expect{subject.touch_out(station1)}.to change{subject.balance}.by(-Journey::PENALTY)
+  end
+  it 'charges a penalty fare if upon touch in, the previous journey did not touch out' do
+    subject.top_up(Oystercard::BALANCE_LIMIT)
+    subject.touch_in(station2)
+    expect{subject.touch_in(station3)}.to change{subject.balance}.by(-(Journey::PENALTY + 1))
+  end
+
+end
+
 end

@@ -9,28 +9,66 @@ class Oystercard
   BALANCE_LIMIT = 90
   MIN_BALANCE = 1
 
+
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
     #@journey = journey_klass
     @journeys = []
-    #@station = nil
+
   end
 
   def touch_in(station)
     fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
-    #@journey[:entry_station] = station
-    #@station = station
-    @new_journey = Journey.new
-    @new_journey.touch_in(station)
-
+    if journeys == []
+        @new_journey = Journey.new
+        station.entry_station
+        @new_journey.touch_in(station)
+        @journeys << station
+        deduct(@new_journey.calculate_fare)
+      else
+        @new_journey = Journey.new
+        station.entry_station
+        @new_journey.touch_in(station)
+        @journeys << station
+        deduct(@new_journey.calculate_fare)
+          if journeys[-2].exitstation == ""
+              deduct(Journey::PENALTY)
+          end
+    end
   end
 
   def touch_out(station)
-    deduct(@new_journey.calculate_fare)
-    #@journey[:exit_station] = station
-    #@journeys << {@station => station}
-    @new_journey.touch_out(station)
-    #@station = nil
+    if journeys == []
+      deduct(Journey::PENALTY)
+      @new_journey = Journey.new
+      station.exit_station
+      @new_journey.touch_out(station)
+      @journeys << station
+    elsif journeys[-1].entrystation ==""
+      @new_journey = Journey.new
+      deduct(Journey::PENALTY)
+      station.exit_station
+      @new_journey.touch_out(station)
+      @journeys << station
+    else
+        deduct(@new_journey.calculate_fare)
+        station.exit_station
+        @new_journey.touch_out(station)
+        @journeys << station
+
+
+    # if @new_journey == nil
+    #     @new_journey = Journey.new
+    #     deduct(Journey::PENALTY)
+    #     station.exit_station
+    #     @new_journey.touch_out(station)
+    #     @journeys << station
+    # else
+    #     deduct(@new_journey.calculate_fare)
+    #     station.exit_station
+    #     @new_journey.touch_out(station)
+    #     @journeys << station
+    end
   end
 
 
@@ -41,7 +79,7 @@ class Oystercard
   end
 
   def in_journey?
-    @station == nil ? false : true
+    @new_journey.in_progress?
   end
 
 private

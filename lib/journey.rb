@@ -1,7 +1,9 @@
 require './lib/oystercard'
 class Journey
 
-attr_accessor :entry_station, :exit_station, :in_progress, :fare
+attr_accessor  :in_progress, :fare, :entry_station, :exit_station
+
+PENALTY = 6
 
 def initialize(in_progress = false)
   @in_progress = in_progress
@@ -14,7 +16,7 @@ def touch_in(station)
 end
 
 def touch_out(station)
-  self.in_progress?(false)
+  @in_progress = false
   @exit_station = station
 
 end
@@ -23,8 +25,8 @@ def calculate_fare
  @fare = 1
 end
 
-def in_progress?(in_progress)
-  @in_progress = in_progress
+def in_progress?
+  @in_progress
 end
 
 end
