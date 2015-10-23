@@ -1,14 +1,15 @@
 require './lib/oystercard'
 
 describe Journey do
-let(:station) {double :station}
-let(:oystercard) {double :oystercard}
+let(:station) {double :station, entry_station: "Aldgate"}
+let(:oystercard) {double :oystercard, touch_in: station}
   it 'should store a station in entry station' do
-  expect(subject.touch_in(station)).to eq station
+    oystercard.touch_in(station)
+  expect(subject.entry_station).to eq "Aldgate"
 end
 
   it 'should store a station in exit' do
-  expect(subject.touch_out(station)).to eq station
+  expect(subject.touch_out(station)).to eq station.name
   end
 
   it 'should calculate a fare' do

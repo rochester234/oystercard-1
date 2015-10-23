@@ -81,11 +81,11 @@ let (:station3) {double :station, name: "Aldgate", zone: 1, entry_station: "Aldg
   it 'charges a penalty fare if upon touch out there is no entry station' do
     expect{subject.touch_out(station1)}.to change{subject.balance}.by(-Journey::PENALTY)
   end
-  it 'charges a penalty fare if upon touch in, the previous journey did not touch out' do
-    subject.top_up(Oystercard::BALANCE_LIMIT)
-    subject.touch_in(station2)
-    expect{subject.touch_in(station3)}.to change{subject.balance}.by(-(Journey::PENALTY + 1))
-  end
+  # it 'charges a penalty fare if upon touch in, the previous journey did not touch out' do
+  #   subject.top_up(Oystercard::BALANCE_LIMIT)
+  #   subject.touch_in(station2)
+  #   expect{subject.touch_in(station3)}.to change{subject.balance}.by(-(Journey::PENALTY + 1))
+  # end
 
 end
 

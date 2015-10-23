@@ -4,7 +4,7 @@ require_relative 'journey_log'
 
 class Oystercard
 
-  attr_reader :balance, :journeys, :journey
+  attr_reader :balance, :current_journey, :journey_log
   DEFAULT_BALANCE = 0
   BALANCE_LIMIT = 90
   MIN_BALANCE = 1
@@ -12,76 +12,28 @@ class Oystercard
 
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
-    #@journey = journey_klass
-    @journeys = []
-
+    @journey_log = []
   end
-
-  def touch_in(station)
-    fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
-    if journeys == []
-        @new_journey = Journey.new
-        station.entry_station
-        @new_journey.touch_in(station)
-        @journeys << station
-        deduct(@new_journey.calculate_fare)
-      else
-        @new_journey = Journey.new
-        station.entry_station
-        @new_journey.touch_in(station)
-        @journeys << station
-        deduct(@new_journey.calculate_fare)
-          if journeys[-2].exitstation == ""
-              deduct(Journey::PENALTY)
-          end
-    end
-  end
-
-  def touch_out(station)
-    if journeys == []
-      deduct(Journey::PENALTY)
-      @new_journey = Journey.new
-      station.exit_station
-      @new_journey.touch_out(station)
-      @journeys << station
-    elsif journeys[-1].entrystation ==""
-      @new_journey = Journey.new
-      deduct(Journey::PENALTY)
-      station.exit_station
-      @new_journey.touch_out(station)
-      @journeys << station
-    else
-        deduct(@new_journey.calculate_fare)
-        station.exit_station
-        @new_journey.touch_out(station)
-        @journeys << station
-
-
-    # if @new_journey == nil
-    #     @new_journey = Journey.new
-    #     deduct(Journey::PENALTY)
-    #     station.exit_station
-    #     @new_journey.touch_out(station)
-    #     @journeys << station
-    # else
-    #     deduct(@new_journey.calculate_fare)
-    #     station.exit_station
-    #     @new_journey.touch_out(station)
-    #     @journeys << station
-    end
-  end
-
-
 
   def top_up(amount)
     fail "The limit is #{BALANCE_LIMIT}" if full?(amount)
     @balance += amount
   end
 
-  def in_journey?
-    @new_journey.in_progress?
+  def touch_in(station)
+    fail "Insufficient funds, please top up #{MIN_BALANCE}" if insufficient_balance?
+    @current_journey = JourneyLog.new
+    @current_journey.start_journey(station)
+    deduct(current_journey.fare)
+    
   end
 
+  def touch_out(station)
+    @current_journey.outstanding_charges
+    @current_journey.exit_journey(station)
+    deduct(@current_journey.fare)
+    @journey_log << @current_journey.journeys
+  end
 private
 
   def full?(amount)
@@ -93,7 +45,8 @@ private
   end
 
   def deduct(fare)
-    @balance -= fare
+  @balance -= fare
   end
+
 
 end
